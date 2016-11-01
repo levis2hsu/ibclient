@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import akka.actor.ActorSystem;
 
+import com.aqitrade.ib.services.ConfigurationService;
 import com.aqitrade.ib.services.messagebus.Encoders;
 import com.aqitrade.ib.services.messagebus.MessagebusService;
 import com.aqitrade.ib.services.messagebus.impl.rabbitmq.Decoders;
+import com.aqitrade.ib.services.messagebus.impl.rabbitmq.MessagebusServiceImpl;
 import com.aqitrade.raduga.messagebus.messages.OrderDirection;
 import com.aqitrade.raduga.messagebus.messages.OrderMessage;
 
@@ -47,7 +49,11 @@ public class Main {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.getEnvironment().getPropertySources().addFirst(ps);
         ctx.scan(Main.class.getPackage().getName());
+        ctx.scan(MessagebusServiceImpl.class.getPackage().getName());
+        ctx.scan(ConfigurationService.class.getPackage().getName());
+        
         ctx.register(AppConfig.class);
+        
         ctx.refresh();
 
         final Main main = ctx.getBean(Main.class);

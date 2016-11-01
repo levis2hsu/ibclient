@@ -51,7 +51,7 @@ public class MessagebusServiceImpl extends MessagebusService {
 
     @PostConstruct
     private void init(){
-        subscribersExecutor = Executors.newFixedThreadPool(Math.min(300, Math.max(0, config.getIntOrFail("com.aqitrade.hsbc.messagebus.connector-threads"))));
+        subscribersExecutor = Executors.newFixedThreadPool(Math.min(300, Math.max(0, config.getIntOrFail("com.aqitrade.ibclient.messagebus.connector-threads"))));
         connectionFactory = connectionFactory();
     }
 
@@ -89,9 +89,9 @@ public class MessagebusServiceImpl extends MessagebusService {
 
         try {
 
-            String exchangeName = config.getStringOrFail("com.aqitrade.hsbc.messagebus.rabbitmq.exchange-name");
+            String exchangeName = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-name");
 
-            String exchangeType = config.getStringOrFail("com.aqitrade.hsbc.messagebus.rabbitmq.exchange-type");
+            String exchangeType = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-type");
 
             try {
 
@@ -122,10 +122,10 @@ public class MessagebusServiceImpl extends MessagebusService {
 
     private ConnectionFactory connectionFactory() {
 
-        String host = config.getStringOrFail("com.aqitrade.hsbc.messagebus.rabbitmq.host");
-        int port = config.getInt("com.aqitrade.hsbc.messagebus.rabbitmq.port").orElse(ConnectionFactory.DEFAULT_AMQP_PORT);
-        String username = config.getString("com.aqitrade.hsbc.messagebus.rabbitmq.username").orElse(ConnectionFactory.DEFAULT_USER);
-        String password = config.getString("com.aqitrade.hsbc.messagebus.rabbitmq.password").orElse(ConnectionFactory.DEFAULT_PASS);
+        String host = config.getString("com.aqitrade.ibclient.messagebus.rabbitmq.host").orElse("localhost");
+        int port = config.getInt("com.aqitrade.ibclient.messagebus.rabbitmq.port").orElse(ConnectionFactory.DEFAULT_AMQP_PORT);
+        String username = config.getString("com.aqitrade.ibclient.messagebus.rabbitmq.username").orElse(ConnectionFactory.DEFAULT_USER);
+        String password = config.getString("com.aqitrade.ibclient.messagebus.rabbitmq.password").orElse(ConnectionFactory.DEFAULT_PASS);
 
         ConnectionFactory factory = new ConnectionFactory();
 
@@ -216,9 +216,9 @@ public class MessagebusServiceImpl extends MessagebusService {
 
         Callable<Void> subscribe = () -> {
 
-            String exchangeName = config.getStringOrFail("com.aqitrade.hsbc.messagebus.rabbitmq.exchange-name");
+            String exchangeName = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-name");
 
-            String exchangeType = config.getStringOrFail("com.aqitrade.hsbc.messagebus.rabbitmq.exchange-type");
+            String exchangeType = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-type");
 
             Channel channel = channel();
 

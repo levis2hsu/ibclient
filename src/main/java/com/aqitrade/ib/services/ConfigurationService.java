@@ -2,6 +2,9 @@ package com.aqitrade.ib.services;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public abstract class ConfigurationService {
 
     public abstract Optional<String> getString(String key);
