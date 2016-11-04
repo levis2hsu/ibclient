@@ -20,6 +20,8 @@ public class TestOrder {
 	final static private int port = 7496;
 	final static private int clientId = 0;
 	
+	private int newOrderId = 0;
+	
 	@BeforeClass
 	public static void init(){
 		ibApi = new IBApiController();
@@ -27,6 +29,13 @@ public class TestOrder {
 	}
 	
 	@Test
+	public void testOrder(){
+		placeOrder();
+		modifyOrder();
+		cancelOrder();
+	}
+	
+//	@Test
 	public void placeOrder(){
 		
 		NewContract contract = new NewContract();
@@ -47,6 +56,7 @@ public class TestOrder {
 		
 		NewOrder order = new NewOrder();
 		
+		//get account id
 		String account = ibApi.getAccounts()[0];
 		
 		order.account(account);
@@ -57,14 +67,59 @@ public class TestOrder {
 		order.lmtPrice( 1.0);
 		order.auxPrice();
 		order.tif( TimeInForce.DAY);
-//		if (contract.isCombo() ) {
-//			TagValue tv = new TagValue( ComboParam.NonGuaranteed.toString(), m_nonGuaranteed.isSelected() ? "1" : "0");
-//			order.smartComboRoutingParams().add( tv);
-//		}
 		
 		//place the order 
-		ibApi.placeOrder(contract, order);
+		ibApi.placeOrModifyOrder(contract, order);
+		newOrderId = order.orderId();
 		
+	}
+	
+//	@Test
+	public void modifyOrder(){
+		
+		if( newOrderId ==0 )
+			return;
+		
+		NewContract contract = new NewContract();
+		contract.symbol("IBM"); 
+		contract.secType(SecType.STK); 
+		contract.expiry(""); 
+		contract.strike(0l); 
+		contract.right(Right.None); 
+		contract.multiplier(""); 
+		contract.exchange( "SMART");
+		contract.primaryExch("ISLAND");
+		contract.currency( "USD" ); 
+		contract.localSymbol("");
+		contract.tradingClass("");
+		
+		NewOrder order = new NewOrder();
+		order.orderId(newOrderId);
+		
+		//get account id
+		String account = ibApi.getAccounts()[0];
+		
+		order.account(account);
+		order.action(Action.BUY);
+		
+		//in place order, it's 200, modify to 100
+		order.totalQuantity(100);
+		order.displaySize(0);
+		order.orderType(OrderType.LMT );
+		order.lmtPrice( 1.0);
+		order.auxPrice();
+		order.tif( TimeInForce.DAY);
+		
+		//modify the order
+		ibApi.placeOrModifyOrder(contract, order);
+		
+	}
+	
+//	@Test
+	public void cancelOrder(){
+		if(newOrderId != 0){
+			ibApi.cancelOrder(newOrderId);
+		}
 	}
 	
 	@AfterClass
