@@ -1,5 +1,7 @@
 package com.aqitrade.ib;
 
+import com.aqitrade.ib.service.handle.MarketdataServiceHandle;
+import com.aqitrade.ib.service.handle.OrderServiceHandle;
 import com.ib.client.CommissionReport;
 import com.ib.client.Contract;
 import com.ib.client.ContractDetails;
@@ -33,6 +35,11 @@ public class IBApiController implements EWrapper{
 	private int m_reqId;	
 	private int m_orderId;
 
+	
+	private OrderServiceHandle  orderServiceHandle=new OrderServiceHandle(); 
+	
+	private MarketdataServiceHandle  marketDataServiceHandle=new MarketdataServiceHandle(); 
+	
 	
 		
 	public IBApiController(){
