@@ -411,12 +411,16 @@ public class IBApiController implements EWrapper{
 	}
 	
 	
-	public void placeOrder(NewContract contract, NewOrder order){
+	public void placeOrModifyOrder(NewContract contract, NewOrder order){
 		if (order.orderId() == 0) {
 			order.orderId( m_orderId++);
 		}
 		
 		((IBApiClient)m_client).placeOrder(contract, order);
+	}
+	
+	public void cancelOrder(int orderId){
+		m_client.cancelOrder(orderId);
 	}
 	
 	/*
