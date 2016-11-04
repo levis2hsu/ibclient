@@ -7,14 +7,14 @@ import com.ib.client.ComboLeg;
 import com.ib.controller.Types.Action;
 
 public class NewComboLeg {
-	enum OpenClose {
+	public enum OpenClose {
 		Same, Open, Close, Unknown;
 
 		static OpenClose get( int i) {
 			return Types.getEnum( i, values() );
 		}
 
-		String getApiString() {
+		public String getApiString() {
 			return "" + ordinal();
 		}
 	}
