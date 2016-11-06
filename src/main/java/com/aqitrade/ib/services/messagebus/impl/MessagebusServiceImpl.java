@@ -1,4 +1,4 @@
-package com.aqitrade.ib.services.messagebus.impl.rabbitmq;
+package com.aqitrade.ib.services.messagebus.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,8 +23,8 @@ import akka.actor.PoisonPill;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 
-import com.aqitrade.ib.services.ConfigurationService;
 import com.aqitrade.ib.services.messagebus.MessagebusService;
+import com.aqitrade.ibclient.IBConfiguration;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -33,9 +33,7 @@ import com.rabbitmq.client.QueueingConsumer;
 @Service
 public class MessagebusServiceImpl extends MessagebusService {
 
-    @Autowired
-    ConfigurationService config;
-
+  
     @Autowired
     ActorSystem actorSystem;
 
@@ -51,7 +49,7 @@ public class MessagebusServiceImpl extends MessagebusService {
 
     @PostConstruct
     private void init(){
-        subscribersExecutor = Executors.newFixedThreadPool(Math.min(300, Math.max(0, config.getIntOrFail("com.aqitrade.ibclient.messagebus.connector-threads"))));
+        subscribersExecutor = Executors.newFixedThreadPool(IBConfiguration.getINSTANCE().getExchangeThreadNum() );
         connectionFactory = connectionFactory();
     }
 
@@ -89,9 +87,9 @@ public class MessagebusServiceImpl extends MessagebusService {
 
         try {
 
-            String exchangeName = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-name");
+            String exchangeName = IBConfiguration.getINSTANCE().getExchangeName();
 
-            String exchangeType = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-type");
+            String exchangeType = IBConfiguration.getINSTANCE().getExchangeType();
 
             try {
 
@@ -122,17 +120,13 @@ public class MessagebusServiceImpl extends MessagebusService {
 
     private ConnectionFactory connectionFactory() {
 
-        String host = config.getString("com.aqitrade.ibclient.messagebus.rabbitmq.host").orElse("localhost");
-        int port = config.getInt("com.aqitrade.ibclient.messagebus.rabbitmq.port").orElse(ConnectionFactory.DEFAULT_AMQP_PORT);
-        String username = config.getString("com.aqitrade.ibclient.messagebus.rabbitmq.username").orElse(ConnectionFactory.DEFAULT_USER);
-        String password = config.getString("com.aqitrade.ibclient.messagebus.rabbitmq.password").orElse(ConnectionFactory.DEFAULT_PASS);
-
+     
         ConnectionFactory factory = new ConnectionFactory();
 
-        factory.setHost(host);
-        factory.setPort(port);
-        factory.setUsername(username);
-        factory.setPassword(password);
+        factory.setHost(IBConfiguration.getINSTANCE().getRabbitMQHost());
+        factory.setPort(IBConfiguration.getINSTANCE().getExchangePort());
+        factory.setUsername(IBConfiguration.getINSTANCE().getExchangeUsername());
+        factory.setPassword(IBConfiguration.getINSTANCE().getRabbitMQPassword());
 
         return factory;
 
@@ -216,9 +210,9 @@ public class MessagebusServiceImpl extends MessagebusService {
 
         Callable<Void> subscribe = () -> {
 
-            String exchangeName = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-name");
+            String exchangeName = IBConfiguration.getINSTANCE().getExchangeName();
 
-            String exchangeType = config.getStringOrFail("com.aqitrade.ibclient.messagebus.rabbitmq.exchange-type");
+            String exchangeType = IBConfiguration.getINSTANCE().getExchangeType();
 
             Channel channel = channel();
 

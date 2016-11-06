@@ -1,4 +1,4 @@
-package com.aqitrade.ib.services.messagebus.impl.rabbitmq;
+package com.aqitrade.ib.services.messagebus.impl;
 
 import java.io.IOException;
 import java.util.function.Function;
